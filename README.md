@@ -33,13 +33,13 @@ Note:
 Clone the repo locally:
 
 ```sh
-git clone https://github.com/wayjay4/video_game_aggregator_app.git video_game_aggregator_app
+git clone https://github.com/wayjay4/video_game_info_app.git video_game_info_app
 ```
 
-Go into video_game_aggregator_app dir:
+Go into video_game_info_app dir:
 
 ```sh
-cd video_game_aggregator_app
+cd video_game_info_app
 ```
 
 Install PHP dependencies (composer v2.6.6):
