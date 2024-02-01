@@ -6,10 +6,10 @@ export default function VideoGameInfoLayout({ children }) {
             <Head title="Laravel Video Games" />
 
             <header className="border-b border-gray-800">
-                <nav className="container mx-auto flex items-center justify-between px-4 py-6">
-                    <div className="flex items-center">
+                <nav className="container mx-auto flex flex-col space-y-6 lg:space-y-0 lg:flex-row items-center justify-between px-4 py-6">
+                    <div className="flex flex-col space-y-6 lg:space-y-0 lg:flex-row items-center">
                         <a href="/"><img src="/assets/images/laracasts-logo.svg" alt="laracasts" className="w-32 flex-none" /></a>
-                        <ul className="flex ml-16 space-x-8">
+                        <ul className="flex ml-0 lg:ml-16 space-x-8">
                             <li><a href="#" className="hover:text-gray-400">Games</a></li>
                             <li><a href="#" className="hover:text-gray-400">Review</a></li>
                             <li><a href="#" className="hover:text-gray-400">Coming Soon</a></li>

@@ -5,7 +5,7 @@ export default function VideoGames() {
         <VideoGameInfoLayout>
             <div className="container mx-auto px-4">
                 <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Popular Games</h2>
-                <div className="popular-games text-sm grid grid-cols-6 gap-12 border-b border-gray-800 pb-16">
+                <div className="popular-games text-sm sm:flex sm:flex-col sm:items-center md:grid md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 grid-cols-6 gap-12 border-b border-gray-800 pb-16">
                     <div className="game mt-8">
                         <div className="relative inline-block">
                             <a href="#">
@@ -175,8 +175,8 @@ export default function VideoGames() {
                         <div className="text-gray-400 mt-1">Playstation 4</div>
                     </div>
                 </div> {/*end of popular games*/}
-                <div className="flex my-10">
-                    <div className="recently-reviewed w-3/4 mr-32">
+                <div className="flex flex-col lg:flex-row my-10 space-y-12 lg:space-y-0">
+                    <div className="recently-reviewed w-full lg:w-3/4 mr-0 lg:mr-32">
                         <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Recently Reviewed</h2>
                         <div className="recently-reviewed-container space-y-12 mt-8">
                             <div className="game bg-gray-800 rounded-lg shadow-md flex px-6 py-6">
@@ -238,7 +238,7 @@ export default function VideoGames() {
                             </div>
                         </div>
                     </div>
-                    <div className="most-anticipated w-1/4 flex flex-col space-y-12">
+                    <div className="most-anticipated lg:w-1/4 flex sm:flex-row sm:justify-between lg:flex-col lg:space-y-12">
                         <div>
                             <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Most Anticipated</h2>
                             <div className="most-anticipated-container space-y-10 mt-8">
@@ -283,7 +283,7 @@ export default function VideoGames() {
 
                         <div>
                             <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Coming Soon</h2>
-                            <div className="most-anticipated-container space-y-10 mt-8">
+                            <div className="coming-soon-container space-y-10 mt-8">
                                 <div className="game flex">
                                     <a href="#">
                                         <img src="/assets/images/ghost.jpg" alt="game cover" className="w-16 hover:opacity-75 transition ease-in-out duration-150" />
