@@ -193,7 +193,7 @@ export default function VideoGames() {
                                         Final Fantasy 7 Remake
                                     </a>
                                     <div className="text-gray-400 mt-1">Playstation 4</div>
-                                    <div className="text-gray-400 mt-6">
+                                    <div className="text-gray-400 mt-6 hidden md:block">
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Aliquid consequatur deserunt dignissimos dolor dolorem exercitationem fuga inventore laborum, molestiae nobis possimus quae quam tempora ut velit veritatis vitae voluptatum! Adipisci aperiam consequatur consequuntur enim eos excepturi facere harum nisi, non omnis optio, provident quae repellendus saepe suscipit ut voluptatibus. Accusamus, animi aperiam excepturi fugiat in labore molestias quae repellat sunt.
                                     </div>
                                 </div>
@@ -212,7 +212,7 @@ export default function VideoGames() {
                                         Animal Crossing: New Horizon
                                     </a>
                                     <div className="text-gray-400 mt-1">Nintendo Switch</div>
-                                    <div className="text-gray-400 mt-6">
+                                    <div className="text-gray-400 mt-6 hidden md:block">
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Esse inventore perferendis placeat quasi tenetur. Accusantium eligendi officiis omnis quod tempore?
                                     </div>
                                 </div>
@@ -231,7 +231,7 @@ export default function VideoGames() {
                                         Doom Eternal
                                     </a>
                                     <div className="text-gray-400 mt-1">Playstation 4, PC</div>
-                                    <div className="text-gray-400 mt-6">
+                                    <div className="text-gray-400 mt-6 hidden md:block">
                                         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Commodi eligendi excepturi ipsa perferendis reiciendis, suscipit tempore? Aut impedit laboriosam nemo optio quam repellendus. Aliquam asperiores, consequatur consequuntur earum, error fuga hic illum impedit iure, maxime nam nisi placeat sapiente vel!
                                     </div>
                                 </div>
