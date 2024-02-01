@@ -23,7 +23,7 @@ Frontend Framework:
 - Npm v10.3.0
 
 Frontend installed packages:
-- coming soon....
+- Heroicons (hand-crafted icons by makes of Tailwind): https://heroicons.com/
 
 Note:
 - Docker/Sail is installed

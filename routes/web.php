@@ -17,6 +17,10 @@ use Inertia\Inertia;
 */
 
 Route::get('/', function () {
+    return Inertia::render('App/VideoGames');
+})->name('homepage');
+
+Route::get('/welcome', function () {
     return view('welcome');
 });
 
