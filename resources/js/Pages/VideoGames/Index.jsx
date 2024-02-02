@@ -1,8 +1,8 @@
-import VideoGameInfoLayout from "@/Layouts/VideoGameInfoLayout.jsx";
+import VideoGameLayout from "@/Layouts/VideoGameLayout.jsx";
 
-export default function VideoGames() {
+export default function Index() {
     return (
-        <VideoGameInfoLayout>
+        <VideoGameLayout>
             <div className="container mx-auto px-4">
                 <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Popular Games</h2>
                 <div className="popular-games text-sm sm:flex sm:flex-col sm:items-center md:grid md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 grid-cols-6 gap-12 border-b border-gray-800 pb-16">
@@ -325,6 +325,6 @@ export default function VideoGames() {
                     </div>
                 </div>
             </div> {/*end container*/}
-        </VideoGameInfoLayout>
+        </VideoGameLayout>
     );
 }

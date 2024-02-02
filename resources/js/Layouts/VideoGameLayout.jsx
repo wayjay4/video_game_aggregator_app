@@ -1,6 +1,6 @@
 import {Head} from "@inertiajs/react";
 
-export default function VideoGameInfoLayout({ children }) {
+export default function VideoGameLayout({ children }) {
     return (
         <>
             <Head title="Laravel Video Games" />
