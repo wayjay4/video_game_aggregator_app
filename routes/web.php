@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -16,17 +17,20 @@ use Inertia\Inertia;
 |
 */
 
-Route::get('/', function () {
-    return Inertia::render('VideoGames/Index');
-})->name('index');
+//Route::get('/', function () {
+//    return Inertia::render('VideoGames/Index');
+//})->name('index');
 
-Route::get('/show', function () {
-    return Inertia::render('VideoGames/Show');
-})->name('show');
+//Route::get('/show', function () {
+//    return Inertia::render('VideoGames/Show');
+//})->name('show');
 
 Route::get('/welcome', function () {
     return view('welcome');
 });
+
+Route::get('/', [GameController::class, 'index'])->name('games.index');
+Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
 
 //Route::get('/', function () {
 //    return Inertia::render('Welcome', [
