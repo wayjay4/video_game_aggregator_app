@@ -11,11 +11,11 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                             <div key={game.id} className="game mt-8">
                                 <div className="relative inline-block">
                                     <a href="#">
-                                        <img src={ game.cover.url.replace("t_thumb","t_cover_big") } alt="game cover" className="w-15 hover:opacity-75 transition ease-in-out duration-150" />
+                                        <img src={ game['cover_image_url'] ? game['cover_image_url'] : '' } alt="game cover" className="w-15 hover:opacity-75 transition ease-in-out duration-150" />
                                     </a>
                                     {game.rating && (
                                         <div className="absolute bottom-0 right-0 w-16 h-16 bg-gray-800 rounded-full" style={{right: '-20px', bottom: '-20px'}}>
-                                            <div className="font-semibold text-xs flex justify-center items-center h-full">{Math.round(game.rating)}%</div>
+                                            <div className="font-semibold text-xs flex justify-center items-center h-full">{game.rating}</div>
                                         </div>
                                     )}
                                 </div>
@@ -23,14 +23,7 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                                     {game.name}
                                 </a>
                                 <div className="text-gray-400 mt-1">
-                                    {game.platforms && game.platforms.map((platform, i, arr)=>{
-                                        if (arr.length - 1 === i) {
-                                            return (platform.abbreviation)
-                                        }
-                                        else {
-                                            return (platform.abbreviation + ', ')
-                                        }
-                                    })}
+                                    {game.platforms && game.platforms}
                                 </div>
                             </div>
                         )
@@ -45,11 +38,11 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                                     <div key={game.id} className="game bg-gray-800 rounded-lg shadow-md flex px-6 py-6">
                                         <div className="relative flex-none">
                                             <a href="#">
-                                                <img src={ game.cover.url.replace("t_thumb","t_cover_big") } alt="game cover" className="w-48 hover:opacity-75 transition ease-in-out duration-150" />
+                                                <img src={ game['cover_image_url'] ? game['cover_image_url'] : 'no_image_found.jpg' } alt={game['cover_image_url'] ? 'game cover' : 'no image' } className="w-48 hover:opacity-75 transition ease-in-out duration-150" />
                                             </a>
                                             {game.rating && (
                                                 <div className="absolute top-0 right-0 w-16 h-16 bg-gray-900 rounded-full" style={{right: '-20px', top: '210px'}}>
-                                                    <div className="font-semibold text-xs flex justify-center items-center h-full">{Math.round(game.rating)}%</div>
+                                                    <div className="font-semibold text-xs flex justify-center items-center h-full">{game.rating}</div>
                                                 </div>
                                             )}
                                         </div>
@@ -58,17 +51,10 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                                                 {game.name}
                                             </a>
                                             <div className="text-gray-400 mt-1">
-                                                {game.platforms && game.platforms.map((platform, i, arr)=>{
-                                                    if (arr.length - 1 === i) {
-                                                        return (platform.abbreviation)
-                                                    }
-                                                    else {
-                                                        return (platform.abbreviation + ', ')
-                                                    }
-                                                })}
+                                                {game.platforms && game.platforms}
                                             </div>
                                             <div className="text-gray-400 mt-6 hidden md:block">
-                                                {game.summary}
+                                                {game.summary && game.summary}
                                             </div>
                                         </div>
                                     </div>
@@ -81,15 +67,15 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                             <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Most Anticipated</h2>
                             <div className="most-anticipated-container space-y-10 mt-8">
                                 {popular_games && most_anticipated.map((game)=> (
-                                        <div key={game.id} className="game flex">
-                                            <a href="#">
-                                                <img src={game.cover ? game.cover.url.replace("t_thumb","t_cover_big") : 'image_not_found.jpg' } alt={game.cover ? 'game cover' : 'no image' } className="bg-gray-800 border border-gray-200 w-16 hover:opacity-75 transition ease-in-out duration-150" style={{width: '64px', height: '85px'}}  />
-                                            </a>
-                                            <div className="ml-4">
-                                                <a className="hover:text-gray-300">{game.name}</a>
-                                                <div className="text-gray-400 text-sm mt-1">{game.first_release_date}</div>
-                                            </div>
+                                    <div key={game['id']} className="game flex">
+                                        <a href="#">
+                                            <img src={ game['cover_image_url'] ? game['cover_image_url'] : 'no_image_found.jpg' }  alt={game['cover_image_url'] ? 'game cover' : 'no image' } className="w-16 hover:opacity-75 transition ease-in-out duration-150" />
+                                        </a>
+                                        <div className="ml-4">
+                                            <a className="hover:text-gray-300">{game['name']}</a>
+                                            <div className="text-gray-400 text-sm mt-1">{game['release_date']}</div>
                                         </div>
+                                    </div>
                                 ))}
                             </div>
                         </div>
@@ -97,19 +83,17 @@ export default function Index({popular_games, recently_reviewed, most_anticipate
                         <div>
                             <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Coming Soon</h2>
                             <div className="coming-soon-container space-y-10 mt-8">
-                                {coming_soon && coming_soon.map((game)=> {
-                                    return (
-                                        <div key={game.id} className="game flex">
-                                            <a href="#">
-                                                <img src={game.cover ? game.cover.url.replace("t_thumb","t_cover_big") : 'image_not_found.jpg' }  alt={game.cover ? 'game cover' : 'no image' } className="bg-gray-800 border border-gray-200 w-16 hover:opacity-75 transition ease-in-out duration-150" style={{width: '64px', height: '85px'}}  />
-                                            </a>
-                                            <div className="ml-4">
-                                                <a className="hover:text-gray-300">{game.name}</a>
-                                                <div className="text-gray-400 text-sm mt-1">{game.first_release_date}</div>
-                                            </div>
+                                {coming_soon && coming_soon.map((game)=> (
+                                    <div key={game['id']} className="game flex">
+                                        <a href="#">
+                                            <img src={ game['cover_image_url'] ? game['cover_image_url'] : 'no_image_found.jpg' }  alt={game['cover_image_url'] ? 'game cover' : 'no image' } className="w-16 hover:opacity-75 transition ease-in-out duration-150" />
+                                        </a>
+                                        <div className="ml-4">
+                                            <a className="hover:text-gray-300">{game['name']}</a>
+                                            <div className="text-gray-400 text-sm mt-1">{game['release_date']}</div>
                                         </div>
-                                    )
-                                })}
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     </div>
