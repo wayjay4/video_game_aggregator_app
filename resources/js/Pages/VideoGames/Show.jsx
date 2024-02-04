@@ -1,6 +1,13 @@
 import VideoGameLayout from "@/Layouts/VideoGameLayout.jsx";
+import {useEffect} from "react";
+import Game from "@/Pages/VideoGames/Components/Game.jsx";
 
 export default function show({game}) {
+    useEffect(() => {
+        showProgressBarCircle(document.getElementById('member_rating'), game['rating']);
+        showProgressBarCircle(document.getElementById('critic_rating'), game['aggregated_rating']);
+    }, []);
+
     return (
         <VideoGameLayout>
             <div className="container mx-auto px-4">
@@ -31,14 +38,14 @@ export default function show({game}) {
                         </div>
                         <div className="flex flex-wrap items-center mt-8">
                             <div className="flex items-center mr-12">
-                                <div className="w-16 h-16 bg-gray-800 rounded-full">
-                                    <div className="font-semibold text-xs flex justify-center items-center h-full">{game['rating']}</div>
+                                <div className="w-16 h-16 bg-gray-800 rounded-full relative text-sm">
+                                    <div id="member_rating"></div>
                                 </div>
                                 <div className="ml-4 text-xs">Member <br/> Score</div>
                             </div>
                             <div className="flex items-center mr-12">
-                                <div className="w-16 h-16 bg-gray-800 rounded-full">
-                                    <div className="font-semibold text-xs flex justify-center items-center h-full">{game['aggregated_rating']}</div>
+                                <div className="w-16 h-16 bg-gray-800 rounded-full relative text-sm">
+                                    <div id="critic_rating"></div>
                                 </div>
                                 <div className="ml-4 text-xs">Critics <br/> Score</div>
                             </div>
@@ -117,26 +124,11 @@ export default function show({game}) {
                         <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Similar Games</h2>
                         <div className="similar-games text-sm sm:flex sm:flex-col sm:items-center md:grid md:grid-cols-2 lg:grid-cols-5 xl:grid-cols-6 grid-cols-6 gap-12">
                             {game['similar_games'] && game['similar_games'].map((game)=>(
-                                <div key={game['id']} className="game mt-8">
-                                    <div className="relative inline-block">
-                                        <a href={route('games.show', game['slug'])}>
-                                            <img src={game['cover_image_url']} alt="game cover" className="hover:opacity-75 transition ease-in-out duration-150" />
-                                        </a>
-                                        <div className="absolute bottom-0 right-0 w-16 h-16 bg-gray-800 rounded-full" style={{right: '-20px', bottom: '-20px'}}>
-                                            <div className="font-semibold text-xs flex justify-center items-center h-full">{game['rating']}</div>
-                                        </div>
-                                    </div>
-                                    <a href={route('games.show', game['slug'])} className="block text-base font-semibold leading-tight hover:text-gray-400 mt-8">
-                                        {game['name']}
-                                    </a>
-                                    <div className="text-gray-400 mt-1">{game['platforms']}</div>
-                                </div>
+                                <Game key={game['id']} game={game} unique_category_type="_similar_games" />
                             ))}
                         </div>
-                        {/*end of similar games*/}
                     </div>
                 }
-                {/*end similar-games container*/}
             </div>
         </VideoGameLayout>
     )

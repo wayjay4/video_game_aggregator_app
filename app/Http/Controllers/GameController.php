@@ -173,7 +173,7 @@ class GameController extends Controller
                 'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
                 'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'rating' => isset($game['rating']) ? round($game['rating']).'%': '0%',
+                'rating' => isset($game['rating']) ? round($game['rating']): '0',
                 'rating_count' => $game['rating_count'] ?? null,
                 'slug' => $game['slug'] ?? null,
                 'summary' => $game['summary'] ?? null,
@@ -194,13 +194,13 @@ class GameController extends Controller
                 'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
                 'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'rating' => isset($game['rating']) ? round($game['rating']).'%': '0%',
+                'rating' => isset($game['rating']) ? round($game['rating']) : '0',
                 'rating_count' => $game['rating_count'] ?? null,
                 'slug' => $game['slug'] ?? null,
                 'summary' => $game['summary'] ?? null,
                 'genres' => isset($game['genres']) ? collect($game['genres'])->pluck('name')->implode(', ') : null,
                 'involved_companies' => isset($game['involved_companies']) ? collect($game['involved_companies'])->pluck('company.name')->implode(', ') : null,
-                'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']).'%' : '0%',
+                'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
                 'url' => $game['url'] ?? null,
                 'videos' => $game['videos'] ?? null,
                 'screenshots' => isset($game['screenshots']) ? collect($game['screenshots'])->map(function ($screenshot) {
@@ -215,7 +215,7 @@ class GameController extends Controller
                             'cover_image_url' => array_key_exists('cover', $game)
                                 ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url'])
                                 : 'https://via.placeholder.com/264.352',
-                            'rating' => isset($game['rating']) ? round($game['rating']).'%' : null,
+                            'rating' => isset($game['rating']) ? round($game['rating']) : null,
                             'platforms' => array_key_exists('platforms', $game)
                                 ? collect($game['platforms'])->pluck('abbreviation')->implode(', ')
                                 : null,

@@ -24,6 +24,7 @@ Frontend Framework:
 
 Frontend installed packages:
 - Heroicons (hand-crafted icons by makes of Tailwind): https://heroicons.com/
+- ProgressBar.js (responsive and slick progress bars with animated SVG paths): https://kimmobrunfeldt.github.io/progressbar.js/
 
 Note:
 - Docker/Sail is installed: https://laravel.com/docs/10.x#docker-installation-using-sail
@@ -203,4 +204,70 @@ $games = Http::withHeaders(config('services.igdb'))->withBody("
     ", 'text/plain')
     ->post('https://api.igdb.com/v4/games')
     ->json();
+```
+
+---
+
+### How to use ProgressBar.js
+
+Setup app configuration:
+
+- To make ProgressBar globally usable open resources/js/bootstrap.js and add the following:
+
+```sh
+import ProgressBar from "progressbar.js";
+window.ProgressBar = ProgressBar;
+```
+
+- Then below that add a function that will show a pre-made or custom progress bar, for example: 
+```sh
+window.showProgressBarCircle = function (container, rating) {
+    let bar = new ProgressBar.Circle(container, {
+        color: 'white',
+        // This has to be the same size as the maximum width to
+        // prevent clipping
+        strokeWidth: 6,
+        trailWidth: 3,
+        trailColor: '#4A5568',
+        easing: 'easeInOut',
+        duration: 2500,
+        text: {
+            autoStyleContainer: false
+        },
+        from: { color: '#48BB78', width: 6 },
+        to: { color: '#48BB78', width: 6 },
+        // Set default step function for all animate calls
+        step: function(state, circle) {
+            circle.path.setAttribute('stroke', state.color);
+            circle.path.setAttribute('stroke-width', state.width);
+
+            var value = Math.round(circle.value() * 100);
+            if (value === 0) {
+                circle.setText('0%');
+            } else {
+                circle.setText(value+'%');
+            }
+
+        }
+    });
+bar.text.style.fontFamily = '"Raleway", Helvetica, sans-serif';
+bar.text.style.fontSize = '2rem';
+
+bar.animate(rating / 100);  // Number from 0.0 to 1.0
+}
+```
+More examples can be found at https://kimmobrunfeldt.github.io/progressbar.js
+
+Using show progressbar example:
+
+```sh
+useEffect(() => {
+    showProgressBarCircle(document.getElementById('member_rating'), 75);
+    showProgressBarCircle(document.getElementById('critic_rating'), 89);
+}, []);
+
+return (
+  <div id="member_rating"></div>
+  <div id="critic_rating"></div>
+)
 ```
