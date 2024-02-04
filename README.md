@@ -23,12 +23,16 @@ Frontend Framework:
 - Npm v10.3.0
 
 Frontend installed packages:
-- Heroicons (hand-crafted icons by makes of Tailwind): https://heroicons.com/
 - ProgressBar.js (responsive and slick progress bars with animated SVG paths): https://kimmobrunfeldt.github.io/progressbar.js/
+- Lodash Debounce: https://dmitripavlutin.com/react-throttle-debounce/
+
+Tailwind features:
+- Tailwind CSS Spinner - Flowbite (spinner component as a loader indicator): https://flowbite.com/docs/components/spinner/
 
 Note:
 - Docker/Sail is installed: https://laravel.com/docs/10.x#docker-installation-using-sail
-- Using IGDB API to get game data: https://api-docs.igdb.com/#getting-started
+- Using IGDB API (Twitch endpoint to get game data): https://api-docs.igdb.com/#getting-started
+- Using Heroicons (hand-crafted icons by makers of Tailwind): https://heroicons.com/
 
 ## Local Dev Installation
 
