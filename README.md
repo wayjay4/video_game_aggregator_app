@@ -26,7 +26,8 @@ Frontend installed packages:
 - Heroicons (hand-crafted icons by makes of Tailwind): https://heroicons.com/
 
 Note:
-- Docker/Sail is installed
+- Docker/Sail is installed: https://laravel.com/docs/10.x#docker-installation-using-sail
+- Using IGDB API to get game data: https://api-docs.igdb.com/#getting-started
 
 ## Local Dev Installation
 
@@ -159,3 +160,47 @@ sail artisan migrate:fresh --seed
 You're ready to go! Visit App in your browser!:
 
 http://localhost/
+
+---
+
+### Configure IGDB API connection
+
+Follow IGDB documentation at https://api-docs.igdb.com/#account-creation to: 
+- create a Twitch account
+- setup an application to get your client_id and client_secret
+- obtain an authorization token
+
+Setup app configuration:
+- Open .env and add IGDB your client_id and authorization token
+
+```sh
+IGDB_CLIENT_ID='client_id_str'
+IGDB_AUTHORIZATION='Bearer token_str'
+```
+
+- Open config/services.php and add the following:
+
+```sh
+'igdb' => [
+    'Client-ID' => env('IGDB_CLIENT_ID'),
+    'Authorization' => env('IGDB_AUTHORIZATION'),
+],
+```
+
+- To make an api call use Illuminate\Support\Facades\Http or your preferred package to add authorization data to the HTTP query header:
+
+```sh
+Http::withHeaders(config('services.igdb'))
+```
+
+Example:
+```sh
+$games = Http::withHeaders(config('services.igdb'))->withBody("
+        fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
+        where platforms = (48,49,130,6) & cover != null;
+        sort total_rating_count desc;
+        limit 12;
+    ", 'text/plain')
+    ->post('https://api.igdb.com/v4/games')
+    ->json();
+```
