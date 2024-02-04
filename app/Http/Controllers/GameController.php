@@ -170,7 +170,7 @@ class GameController extends Controller
             $result[] = [
                 'id' => $game['id'] ?? null,
                 'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
+                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
                 'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
                 'rating' => isset($game['rating']) ? round($game['rating']): '0',
@@ -191,7 +191,7 @@ class GameController extends Controller
             $result[] = [
                 'id' => $game['id'] ?? null,
                 'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
+                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
                 'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
                 'rating' => isset($game['rating']) ? round($game['rating']) : '0',
@@ -214,7 +214,7 @@ class GameController extends Controller
                         return collect($game)->merge([
                             'cover_image_url' => array_key_exists('cover', $game)
                                 ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url'])
-                                : 'https://via.placeholder.com/264.352',
+                                : 'https://via.placeholder.com/264x352',
                             'rating' => isset($game['rating']) ? round($game['rating']) : null,
                             'platforms' => array_key_exists('platforms', $game)
                                 ? collect($game['platforms'])->pluck('abbreviation')->implode(', ')

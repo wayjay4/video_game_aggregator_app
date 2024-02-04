@@ -19,7 +19,7 @@ class GameController extends Controller
             search \"{$request->get('filter')}\";
             fields id, name, slug, cover.url, platforms.abbreviation;
             where platforms = (48,49,130,6) & cover != null;
-            limit 6;
+            limit 8;
         ", 'text/plain')
             ->post('https://api.igdb.com/v4/games')
             ->json();
@@ -39,7 +39,7 @@ class GameController extends Controller
             $result[] = [
                 'id' => $game['id'] ?? null,
                 'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
+                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
                 'slug' => $game['slug'] ?? null,
             ];
