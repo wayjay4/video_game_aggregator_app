@@ -209,6 +209,7 @@ $games = Http::withHeaders(config('services.igdb'))->withBody("
 ---
 
 ### How to use ProgressBar.js
+Note: ProgressBar is included already, this is FYI.
 
 Setup app configuration:
 
