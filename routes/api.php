@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/games/query', [GameController::class, 'query'])->name('games.query');
+Route::get('/games/filter', [GameController::class, 'filter'])->name('games.filter');
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();

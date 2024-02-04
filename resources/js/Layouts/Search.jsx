@@ -3,39 +3,39 @@ import debounce from "lodash.debounce";
 import axios from "axios";
 
 function Search() {
-    const [query, setQuery] = useState('');
+    const [filter, setQuery] = useState('');
     const [games, setGames] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    const queryChangeHandler = (event) => {
+    const handleFilterChange = (event) => {
         const filter = event.target.value;
         const base_url = event.target.getAttribute('data-route');
-        setIsLoading(true);
         setQuery(filter);
+        setIsLoading(true);
 
         axios({
             method: 'get',
             baseURL: `${base_url}?filter=${filter}`,
             responseType: 'json',
         }).then((response) => {
-            setGames(response.data.query);
+            setGames(response.data.result);
             setIsLoading(false);
         })
     };
 
     const debounceChangeHandler = useMemo(
-        () => debounce(queryChangeHandler, 300),
-        [query]
+        () => debounce(handleFilterChange, 300),
+        [filter]
     );
 
     return (
         <div className="relative">
             <input type="text"
-                   name="search_query"
-                   id="search_query"
+                   name="search_filter"
+                   id="search_filter"
                    className="bg-gray-800 text-sm rounded-full focus:outline-none focus:shadow-outline w-64 px-3 py-1 pl-8"
                    placeholder="Search..."
-                   data-route={route('games.query')}
+                   data-route={route('games.filter')}
                    onChange={debounceChangeHandler}
             />
             <div className="absolute top-0 flex items-center h-full ml-2">
@@ -48,7 +48,7 @@ function Search() {
                     {(games.length > 0 && !isLoading) && games.map((game)=>{
                         return (
                             <li key={game['id']} className="border-b border-gray-700">
-                                <a href={route('games.show', [game['slug']])} className="px-3 py-3 block hover:bg-gray-700 flex items-center transition ease-in-out duration-150">
+                                <a href={route('games.show', [game['slug']])} className="px-3 py-3 hover:bg-gray-700 flex items-center transition ease-in-out duration-150">
                                     <img src={game['cover_image_url']} alt="game cover" className="w-10" />
                                     <span className="ml-4">{game['name']}</span>
                                 </a>
@@ -56,8 +56,8 @@ function Search() {
                         )
                         })
                     }
-                    {(games.length < 1 && query !== '' && !isLoading) && (
-                        <li className="border-b border-gray-700 text-center">No results for '{query}'</li>
+                    {(games.length < 1 && filter !== '' && !isLoading) && (
+                        <li className="border-b border-gray-700 text-center">No results for '{filter}'</li>
                     )}
                 </ul>
             </div>
