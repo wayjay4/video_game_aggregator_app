@@ -21,10 +21,10 @@ class GameController extends Controller
         $current = Carbon::now()->timestamp;
 
 //        $popular_games = Http::withHeaders(config('services.igdb'))->withBody("
-//            fields name, cover.*, first_release_date, platforms.abbreviation, rating, rating_count, slug;
+//            fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
 //            where platforms = (48,49,130,6) & cover != null
 //                & (first_release_date >= {$before} & first_release_date < {$after} & rating_count > 5);
-//            sort rating_count desc;
+//            sort total_rating_count desc;
 //            limit 12;
 //        ", 'text/plain')
 //            ->post('https://api.igdb.com/v4/games')
@@ -49,7 +49,7 @@ class GameController extends Controller
 //        ", 'text/plain')
 //            ->post('https://api.igdb.com/v4/games')
 //            ->json();
-        
+
 //        $coming_soon = Http::withHeaders(config('services.igdb'))->withBody("
 //            fields name, cover.*, first_release_date, platforms.abbreviation, rating, rating_count, slug;
 //            where platforms = (48,49,130,6) & cover != null & first_release_date > {$current};
@@ -61,10 +61,10 @@ class GameController extends Controller
 
         $queries = Http::withHeaders(config('services.igdb'))->withBody("
             query games \"popular_games\" {
-                fields name, cover.*, first_release_date, platforms.abbreviation, rating, rating_count, slug;
+                fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
                 where platforms = (48,49,130,6) & cover != null
                     & (first_release_date >= {$before} & first_release_date < {$after} & rating_count > 5);
-                sort rating_count desc;
+                sort total_rating_count desc;
                 limit 12;
             };
 
@@ -121,9 +121,21 @@ class GameController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(string $slug): \Inertia\Response
     {
-        return Inertia::render('VideoGames/Show');
+        $game = Http::withHeaders(config('services.igdb'))->withBody("
+            fields *, cover.*, platforms.abbreviation, screenshots.*, genres.name, involved_companies.company.name, url, videos.video_id, websites.url, similar_games.cover.url, similar_games.name, similar_games.rating,similar_games.platforms.abbreviation, similar_games.slug;
+            where slug=\"{$slug}\";
+            limit 1;
+        ", 'text/plain')
+            ->post('https://api.igdb.com/v4/games')
+            ->json();
+
+        abort_if(!$game, 404);
+
+        return Inertia::render('VideoGames/Show')->with([
+            'game' => ($this->formatSingleGame($game))[0],
+        ]);
     }
 
     /**
@@ -161,10 +173,70 @@ class GameController extends Controller
                 'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
                 'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'rating' => isset($game['rating']) ? round($game['rating']).'%': null,
+                'rating' => isset($game['rating']) ? round($game['rating']).'%': '0%',
                 'rating_count' => $game['rating_count'] ?? null,
                 'slug' => $game['slug'] ?? null,
                 'summary' => $game['summary'] ?? null,
+            ];
+        }
+
+        return $result;
+    }
+
+    private function formatSingleGame($game_data): array
+    {
+        $result = [];
+
+        foreach ($game_data as $game) {
+            $result[] = [
+                'id' => $game['id'] ?? null,
+                'name' => $game['name'] ?? null,
+                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : null,
+                'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
+                'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
+                'rating' => isset($game['rating']) ? round($game['rating']).'%': '0%',
+                'rating_count' => $game['rating_count'] ?? null,
+                'slug' => $game['slug'] ?? null,
+                'summary' => $game['summary'] ?? null,
+                'genres' => isset($game['genres']) ? collect($game['genres'])->pluck('name')->implode(', ') : null,
+                'involved_companies' => isset($game['involved_companies']) ? collect($game['involved_companies'])->pluck('company.name')->implode(', ') : null,
+                'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']).'%' : '0%',
+                'url' => $game['url'] ?? null,
+                'videos' => $game['videos'] ?? null,
+                'screenshots' => isset($game['screenshots']) ? collect($game['screenshots'])->map(function ($screenshot) {
+                        return [
+                            'id' => $screenshot['id'],
+                            'big' => Str::replaceFirst('t_thumb', 't_screenshot_big', $screenshot['url']),
+                            'huge' => Str::replaceFirst('t_thumb', 't_screenshot_huge', $screenshot['url']),
+                        ];
+                    })->take(6) : collect(),
+                'similar_games' => isset($game['similar_games']) ? collect($game['similar_games'])->map(function ($game) {
+                        return collect($game)->merge([
+                            'cover_image_url' => array_key_exists('cover', $game)
+                                ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url'])
+                                : 'https://via.placeholder.com/264.352',
+                            'rating' => isset($game['rating']) ? round($game['rating']).'%' : null,
+                            'platforms' => array_key_exists('platforms', $game)
+                                ? collect($game['platforms'])->pluck('abbreviation')->implode(', ')
+                                : null,
+                            'slug' => $game['slug'],
+                        ]);
+                    })->take(6) : collect(),
+                'social' => isset($game['websites']) ? [
+                    'website' => collect($game['websites'])->first(),
+                    'steam' => collect($game['websites'])->filter(function ($website) {
+                        return Str::contains($website['url'], 'steam');
+                    })->first(),
+                    'facebook' => collect($game['websites'])->filter(function ($website) {
+                        return Str::contains($website['url'], 'facebook');
+                    })->first(),
+                    'twitter' => collect($game['websites'])->filter(function ($website) {
+                        return Str::contains($website['url'], 'twitter');
+                    })->first(),
+                    'instagram' => collect($game['websites'])->filter(function ($website) {
+                        return Str::contains($website['url'], 'instagram');
+                    })->first(),
+                ] : [],
             ];
         }
 

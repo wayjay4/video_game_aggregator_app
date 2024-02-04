@@ -30,7 +30,7 @@ Route::get('/welcome', function () {
 });
 
 Route::get('/', [GameController::class, 'index'])->name('games.index');
-Route::get('/games/{game}', [GameController::class, 'show'])->name('games.show');
+Route::get('/games/{slug}', [GameController::class, 'show'])->name('games.show');
 
 //Route::get('/', function () {
 //    return Inertia::render('Welcome', [
