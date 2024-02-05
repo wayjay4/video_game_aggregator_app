@@ -126,7 +126,7 @@ class GameController extends Controller
      */
     public function show(string $slug): \Inertia\Response
     {
-        $game = Cache::remember('popular-games', 7, function () use ($slug) {
+        $game = Cache::remember('show-game'.$slug, 60, function () use ($slug) {
             return Http::withHeaders(config('services.igdb'))->withBody("
                 fields *, cover.*, platforms.abbreviation, screenshots.*, genres.name, involved_companies.company.name, url, videos.video_id, websites.url, similar_games.cover.url, similar_games.name, similar_games.rating,similar_games.platforms.abbreviation, similar_games.slug;
                 where slug=\"{$slug}\";
@@ -195,7 +195,7 @@ class GameController extends Controller
                 'id' => $game['id'] ?? null,
                 'name' => $game['name'] ?? null,
                 'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
-                'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
+                'release_date' => isset($game['first_release_date']) ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
                 'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
                 'rating' => isset($game['rating']) ? round($game['rating']) : '0',
                 'rating_count' => $game['rating_count'] ?? null,
@@ -206,7 +206,7 @@ class GameController extends Controller
                 'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
                 'url' => $game['url'] ?? null,
                 'videos' => $game['videos'] ?? null,
-                'trailer' => 'https://youtube.com/embed/'. $game['videos'][0]['video_id'],
+                'trailer' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/embed/'. $game['videos'][0]['video_id'] : null,
                 'screenshots' => isset($game['screenshots']) ? collect($game['screenshots'])->map(function ($screenshot) {
                         return [
                             'id' => $screenshot['id'],

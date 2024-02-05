@@ -36,6 +36,9 @@ export default function show({game}) {
                     </div>
                     <div className="lg:ml-12 lg:mr-64 mt-8 lg:mt-0">
                         <h2 className="font-semibold text-4xl leading-tight mt-1">{game['name']}</h2>
+                        {game['release_date'] && (
+                            <div className="text-gray-300 my-1">Release date: {game['release_date']}</div>
+                        )}
                         <div className="text-gray-400">
                             {game['genres'] && (
                                 <>
@@ -110,7 +113,7 @@ export default function show({game}) {
                             {game['summary'] && game['summary']}
                         </p>
                         <div className="mt-12">
-                            {game['videos'] && (
+                            {game['trailer'] && (
                                 <>
                                     <button onClick={()=>setIsTrailerModalVisible(true)} className="flex bg-blue-500 text-white font-semibold px-4 py-4 hover:bg-blue-600 rounded transition ease-in-out duration-150">
                                         <svg className="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
@@ -125,8 +128,11 @@ export default function show({game}) {
                                             <div className="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
                                                 <div className="bg-gray-900 rounded">
                                                     <div className="flex justify-end pr-4 pt-2">
-                                                        <button className="text-3xl leading-none hover:text-gray-300" onClick={()=>setIsTrailerModalVisible(false)}>
-                                                            &times;
+                                                        <button className="text-3xl leading-none text-amber-500 hover:text-red-600 flex items-center" onClick={()=>setIsTrailerModalVisible(false)}>
+                                                            <span className="font-semibold text-sm mr-1">Close</span>
+                                                            <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                            </svg>
                                                         </button>
                                                     </div>
                                                     <div className="modal-body px-8 py-8">
@@ -152,7 +158,7 @@ export default function show({game}) {
                                 {game['screenshots'] && game['screenshots'].map(screenshot => (
                                     <div key={screenshot['id']}>
                                         <a href={screenshot['huge']}>
-                                            <img src={screenshot['big']} onClick={handleScreenshotOnClick} alt="game screenshot" className="hover:opacity-75 transition ease-in-out duration-150" />
+                                            <img src={screenshot['huge']} onClick={handleScreenshotOnClick} alt="game screenshot" className="hover:opacity-75 transition ease-in-out duration-150" />
                                         </a>
                                     </div>
                                 ))}
@@ -164,8 +170,11 @@ export default function show({game}) {
                                 <div className="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
                                     <div className="bg-gray-900 rounded">
                                         <div className="flex justify-end pr-4 pt-2">
-                                            <button className="text-3xl leading-none hover:text-gray-300" onClick={()=>setIsImageModalVisible(false)}>
-                                                &times;
+                                            <button className="text-3xl leading-none text-amber-500 hover:text-red-600 flex items-center" onClick={()=>setIsImageModalVisible(false)}>
+                                                <span className="font-semibold text-sm mr-1">Close</span>
+                                                <svg className="w-8 h-8" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                                </svg>
                                             </button>
                                         </div>
                                         <div className="modal-body px-8 py-8">
