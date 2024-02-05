@@ -33,6 +33,8 @@ Note:
 - Docker/Sail is installed: https://laravel.com/docs/10.x#docker-installation-using-sail
 - Using IGDB API (Twitch endpoint to get game data): https://api-docs.igdb.com/#getting-started
 - Using Heroicons (hand-crafted icons by makers of Tailwind): https://heroicons.com/
+- Fluid Width Video (tips and tricks): https://css-tricks.com/fluid-width-video/
+- Laravel Cache (speed-up loading games): https://laravel.com/docs/10.x/cache
 
 ## Local Dev Installation
 
