@@ -1,11 +1,30 @@
 import VideoGameLayout from "@/Layouts/VideoGameLayout.jsx";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import Game from "@/Pages/VideoGames/Components/Game.jsx";
 
 export default function show({game}) {
+    const [isTrailerModalVisible, setIsTrailerModalVisible] = useState(false);
+    const [isImageModalVisible, setIsImageModalVisible] = useState(false);
+    const [currentScreenshotImage, setCurrentScreenshotImage] = useState('');
+
     useEffect(() => {
         showProgressBarCircle(document.getElementById('member_rating'), game['rating']);
         showProgressBarCircle(document.getElementById('critic_rating'), game['aggregated_rating']);
+    }, []);
+
+    const handleScreenshotOnClick = (event) => {
+      event.preventDefault();
+      setCurrentScreenshotImage(event.target.getAttribute('src'));
+      setIsImageModalVisible(true);
+    };
+
+    useEffect(() => {
+        document.onkeydown = function(event) {
+            if(event.key === 'Escape') {
+                setIsTrailerModalVisible(false);
+                setIsImageModalVisible(false);
+            }
+        }
     }, []);
 
     return (
@@ -92,31 +111,71 @@ export default function show({game}) {
                         </p>
                         <div className="mt-12">
                             {game['videos'] && (
-                                <a href={'https://youtube.com/watch/'+ game['videos'][0]['video_id'] } className="inline-flex bg-blue-500 text-white font-semibold px-4 py-4 hover:bg-blue-600 rounded transition ease-in-out duration-150">
-                                    <svg className="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-                                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
-                                    </svg>
-                                    <span className="ml-2">Play Trailer</span>
-                                </a>
+                                <>
+                                    <button onClick={()=>setIsTrailerModalVisible(true)} className="flex bg-blue-500 text-white font-semibold px-4 py-4 hover:bg-blue-600 rounded transition ease-in-out duration-150">
+                                        <svg className="w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+                                        </svg>
+                                        <span className="ml-2">Play Trailer</span>
+                                    </button>
+
+                                    {isTrailerModalVisible && (
+                                        <div style={{backgroundColor: "rgba(0,0,0,.5)"}}  className="z-50 fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto">
+                                            <div className="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                                                <div className="bg-gray-900 rounded">
+                                                    <div className="flex justify-end pr-4 pt-2">
+                                                        <button className="text-3xl leading-none hover:text-gray-300" onClick={()=>setIsTrailerModalVisible(false)}>
+                                                            &times;
+                                                        </button>
+                                                    </div>
+                                                    <div className="modal-body px-8 py-8">
+                                                        <div className="responsive-container overflow-hidden relative" style={{paddingTop: "56.25%"}}>
+                                                            <iframe width="560" height="315" className="responsive-iframe absolute top-0 left-0 w-full h-full" src={game['trailer']} style={{border: '0'}} allow="autoplay; encrypted-media" allowFullScreen></iframe>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </>
                             )}
                         </div>
                     </div>
                 </div> {/*end game details*/}
 
                 {(game['screenshots'].length > 0) &&
-                    <div className="images-container border-b border-gray-800 pb-12 mt-8">
-                        <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Screenshots</h2>
-                        <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
-                            {game['screenshots'] && game['screenshots'].map(screenshot => (
-                                <div key={screenshot['id']}>
-                                    <a href={screenshot['huge']}>
-                                        <img src={screenshot['big']} className="hover:opacity-75 transition ease-in-out duration-150" />
-                                    </a>
-                                </div>
-                            ))}
+                    <>
+                        <div className="images-container border-b border-gray-800 pb-12 mt-8">
+                            <h2 className="text-blue-500 uppercase tracking-wide font-semibold">Screenshots</h2>
+                            <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mt-8">
+                                {game['screenshots'] && game['screenshots'].map(screenshot => (
+                                    <div key={screenshot['id']}>
+                                        <a href={screenshot['huge']}>
+                                            <img src={screenshot['big']} onClick={handleScreenshotOnClick} alt="game screenshot" className="hover:opacity-75 transition ease-in-out duration-150" />
+                                        </a>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    </div>
+
+                        {isImageModalVisible && (
+                            <div style={{backgroundColor: "rgba(0,0,0,.5)"}}  className="z-50 fixed top-0 left-0 w-full h-full flex items-center shadow-lg overflow-y-auto">
+                                <div className="container mx-auto lg:px-32 rounded-lg overflow-y-auto">
+                                    <div className="bg-gray-900 rounded">
+                                        <div className="flex justify-end pr-4 pt-2">
+                                            <button className="text-3xl leading-none hover:text-gray-300" onClick={()=>setIsImageModalVisible(false)}>
+                                                &times;
+                                            </button>
+                                        </div>
+                                        <div className="modal-body px-8 py-8">
+                                            <img src={currentScreenshotImage} alt="game screenshot" className="hover:opacity-75 transition ease-in-out duration-150" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </>
                 }
                 {/*end images container*/}
                 {(game['similar_games'].length > 0) &&

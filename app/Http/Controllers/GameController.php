@@ -203,6 +203,7 @@ class GameController extends Controller
                 'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
                 'url' => $game['url'] ?? null,
                 'videos' => $game['videos'] ?? null,
+                'trailer' => 'https://youtube.com/embed/'. $game['videos'][0]['video_id'],
                 'screenshots' => isset($game['screenshots']) ? collect($game['screenshots'])->map(function ($screenshot) {
                         return [
                             'id' => $screenshot['id'],
