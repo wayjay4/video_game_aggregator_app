@@ -1,9 +1,11 @@
 # Video Catalog App
 
-A Video Game Aggregator application to illustrate using Laravel to pull data from the IGDB API and display game information, coming soon, 
-videos, and screenshots. 
+A Video GameCard Aggregator application to illustrate using Laravel to pull data from the IGDB API and display game
+information, coming soon,
+videos, and screenshots.
 
 Exploring frontend features:
+
 1. HTTP client
 2. Tailwind CSS
 3. Livewire
@@ -14,22 +16,29 @@ Exploring frontend features:
 ![homepage_screenshot.png](public/assets/images/homepage_screenshot.png)
 
 Backend Framework:
+
 - **Laravel v10.40.0 (PHP v8.3.1):** https://laravel.com/docs/10.x/installation#docker-installation-using-sail
   with Breeze, Inertia, React, and PHP Unit testing scaffolding
 
 Frontend Framework:
+
 - **React v8.2.0:** https://react.dev/
 - Node v20.11.0
 - Npm v10.3.0
 
 Frontend installed packages:
-- ProgressBar.js (responsive and slick progress bars with animated SVG paths): https://kimmobrunfeldt.github.io/progressbar.js/
+
+- ProgressBar.js (responsive and slick progress bars with animated SVG
+  paths): https://kimmobrunfeldt.github.io/progressbar.js/
 - Lodash Debounce: https://dmitripavlutin.com/react-throttle-debounce/
 
 Tailwind features:
-- Tailwind CSS Spinner - Flowbite (spinner component as a loader indicator): https://flowbite.com/docs/components/spinner/
+
+- Tailwind CSS Spinner - Flowbite (spinner component as a loader
+  indicator): https://flowbite.com/docs/components/spinner/
 
 Note:
+
 - Docker/Sail is installed: https://laravel.com/docs/10.x#docker-installation-using-sail
 - Using IGDB API (Twitch endpoint to get game data): https://api-docs.igdb.com/#getting-started
 - Using Heroicons (hand-crafted icons by makers of Tailwind): https://heroicons.com/
@@ -59,18 +68,23 @@ composer install
 Install NPM dependencies (node v20.11.0, npm v10.3.0):
 
 **Node**
+
 ```sh
 nvm install 20.11.0
 ```
+
 ```sh
 nvm use 20.11.0
 ```
+
 - https://stackoverflow.com/questions/7718313/how-to-change-to-an-older-version-of-node-js
 
 **Npm**
+
 ```sh
 npm install npm@10.3.0 -g
 ```
+
 - https://stackoverflow.com/questions/9755841/how-can-i-change-the-version-of-npm-using-nvm
 
 Build assets:
@@ -84,6 +98,7 @@ npm run dev
 ```
 
 Two options to serve the Application
+
 - 1.) using php artisan serve and local database (see instructions below)
 - 2.) using docker service container (see instructions below)
 
@@ -103,7 +118,8 @@ Generate application key:
 php artisan key:generate
 ```
 
-Create a local MySql database. You can also use another database (SQLite, Postgres), simply update your configuration accordingly.
+Create a local MySql database. You can also use another database (SQLite, Postgres), simply update your configuration
+accordingly.
 
 - open .env file and change db settings as needed
 - make database as needed
@@ -141,6 +157,7 @@ php artisan key:generate
 Install Docker
 
 Make sure you have installed and started Docker Desktop Application:
+
 - https://www.docker.com/
 
 Start Docker/Sail:
@@ -152,7 +169,6 @@ Start Docker/Sail:
 Configuring A Shell Alias for 'sail' (optional)
 
 - https://laravel.com/docs/10.x/sail#configuring-a-shell-alias
-
 
 ```sh
 sail up
@@ -172,12 +188,14 @@ http://localhost/
 
 ### Configure IGDB API connection
 
-Follow IGDB documentation at https://api-docs.igdb.com/#account-creation to: 
+Follow IGDB documentation at https://api-docs.igdb.com/#account-creation to:
+
 - create a Twitch account
 - setup an application to get your client_id and client_secret
 - obtain an authorization token
 
 Setup app configuration:
+
 - Open .env and add IGDB your client_id and authorization token
 
 ```sh
@@ -194,13 +212,15 @@ IGDB_AUTHORIZATION='Bearer token_str'
 ],
 ```
 
-- To make an api call use Illuminate\Support\Facades\Http or your preferred package to add authorization data to the HTTP query header:
+- To make an api call use Illuminate\Support\Facades\Http or your preferred package to add authorization data to the
+  HTTP query header:
 
 ```sh
 Http::withHeaders(config('services.igdb'))
 ```
 
 Example:
+
 ```sh
 $games = Http::withHeaders(config('services.igdb'))->withBody("
         fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
@@ -215,6 +235,7 @@ $games = Http::withHeaders(config('services.igdb'))->withBody("
 ---
 
 ### How to use ProgressBar.js
+
 Note: ProgressBar is included already, this is FYI.
 
 Setup app configuration:
@@ -226,7 +247,8 @@ import ProgressBar from "progressbar.js";
 window.ProgressBar = ProgressBar;
 ```
 
-- Then below that add a function that will show a pre-made or custom progress bar, for example: 
+- Then below that add a function that will show a pre-made or custom progress bar, for example:
+
 ```sh
 window.showProgressBarCircle = function (container, rating) {
     let bar = new ProgressBar.Circle(container, {
@@ -263,6 +285,7 @@ bar.text.style.fontSize = '2rem';
 bar.animate(rating / 100);  // Number from 0.0 to 1.0
 }
 ```
+
 More examples can be found at https://kimmobrunfeldt.github.io/progressbar.js
 
 Using show progressbar example:
