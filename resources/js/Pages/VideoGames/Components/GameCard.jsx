@@ -16,7 +16,7 @@ export default function GameCard({game, unique_category_type}) {
                     <img
                         src={game['cover_image_url']}
                         alt="game cover"
-                        className="max-h-48 hover:opacity-75 transition ease-in-out duration-150"
+                        className="md:max-h-48 hover:opacity-75 transition ease-in-out duration-150"
                     />
 
                     {game['rating'] &&
