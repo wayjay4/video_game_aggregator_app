@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\IgdbApiService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -11,6 +12,13 @@ use Inertia\Inertia;
 
 class GameController extends Controller
 {
+    public IgdbApiService $igdb_api_service;
+
+    public function __construct(IgdbApiService $igdb_api_service)
+    {
+        $this->igdb_api_service = $igdb_api_service;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -60,8 +68,9 @@ class GameController extends Controller
 //            ->post('https://api.igdb.com/v4/games')
 //            ->json();
 
-        $queries = Cache::remember('popular-games', 7, function () use ($before, $after, $current, $after_four_months) {
-            return Http::withHeaders(config('services.igdb'))->withBody("
+        try {
+            $response = Cache::remember('popular-games', 0, function () use ($before, $after, $current, $after_four_months) {
+                return Http::withHeaders(config('services.igdb'))->withBody("
                 query games \"popular_games\" {
                     fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
                     where platforms = (48,49,130,6) & cover != null
@@ -93,13 +102,23 @@ class GameController extends Controller
                     limit 4;
                 };
             ", 'text/plain')
-                ->post('https://api.igdb.com/v4/multiquery')
-                ->json();
-        });
+                    ->post('https://api.igdb.com/v4/multiquery');
+            });
+        } catch (\Exception $e) {
+            return $e->getMessage();
+        }
 
-        $result = [];
-        foreach ($queries as $query) {
-            $result[$query['name']] = $this->formatGameData($query['result']);
+        $statusCode = $response->status();
+        $jsonResponse = $response->json();
+
+        if ($statusCode === 200) {
+            $result = [];
+            foreach ($jsonResponse as $query) {
+                $result[$query['name']] = $this->formatGameData($query['result']);
+            }
+        } else {
+            $this->igdb_api_service->getAuthorizationToken();
+            return redirect()->route('games.index');
         }
 
         return Inertia::render('VideoGames/Index')->with($result);
