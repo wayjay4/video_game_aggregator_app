@@ -117,8 +117,9 @@ class GameController extends Controller
                 $result[$query['name']] = $this->formatGameData($query['result']);
             }
         } else {
-            $this->igdb_api_service->getAuthorizationToken();
-            return redirect()->route('games.index');
+            // disabling, doesn't work in production
+//            $this->igdb_api_service->getAuthorizationToken();
+//            return redirect()->route('games.index');
         }
 
         return Inertia::render('VideoGames/Index')->with($result);
