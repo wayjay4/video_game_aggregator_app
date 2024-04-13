@@ -25,15 +25,8 @@ class IgdbApiService
 
     public function checkTokenExpired($token): bool
     {
-        $expirationDurationInSeconds = $token['expires_in'];
-        $updatedAt = $token->updated_at;
-        $currentDateTime = Carbon::now();
-
-        // Calculate the expiration timestamp by adding the expiration duration to the token's updated_at timestamp
-        $expirationTimestamp = $updatedAt->addSeconds($expirationDurationInSeconds);
-
         // Check if the current time is after the expiration timestamp
-        return $currentDateTime->gt($expirationTimestamp);
+        return Carbon::now()->gt($token['expires_in']);
     }
 
     public function getAuthorizationToken(bool $create = false)
@@ -43,11 +36,12 @@ class IgdbApiService
         $response = Http::post($uri)->json();
 
         $access_token = ucfirst(strtolower($response['token_type'])) . ' ' . $response['access_token'];
+        $expirationDateTime = Carbon::now()->addSeconds($response['expires_in']);
 
         if ($create) {
-            $token = ThirdPartyApi::create(['name' => 'igdb', 'authorization_token' => $access_token, 'expires_in' => $response['expires_in']]);
+            $token = ThirdPartyApi::create(['name' => 'igdb', 'authorization_token' => $access_token, 'expires_in' => $expirationDateTime]);
         } else {
-            $token = ThirdPartyApi::where('name', 'LIKE', 'igdb')->first()->update(['authorization_token' => $access_token, 'expires_in' => $response['expires_in']]);
+            $token = ThirdPartyApi::where('name', 'LIKE', 'igdb')->first()->update(['authorization_token' => $access_token, 'expires_in' => $expirationDateTime]);
         }
 
         return $token;

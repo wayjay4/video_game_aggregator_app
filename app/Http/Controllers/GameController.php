@@ -12,13 +12,13 @@ use Inertia\Inertia;
 
 class GameController extends Controller
 {
-    public IgdbApiService $igdb_api_service;
+    public IgdbApiService $igdbApiService;
     public array $headers;
 
-    public function __construct(IgdbApiService $igdb_api_service)
+    public function __construct(IgdbApiService $igdbApiService)
     {
-        $this->igdb_api_service = $igdb_api_service;
-        $this->headers = $this->igdb_api_service->getApiHeaders();
+        $this->igdbApiService = $igdbApiService;
+        $this->headers = $this->igdbApiService->getApiHeaders();
     }
 
     /**
@@ -69,8 +69,6 @@ class GameController extends Controller
 //        ", 'text/plain')
 //            ->post('https://api.igdb.com/v4/games')
 //            ->json();
-
-//        $headers = $this->igdb_api_service->getApiHeaders();
 
         $headers = $this->headers;
 
@@ -123,7 +121,7 @@ class GameController extends Controller
                 $result[$query['name']] = $this->formatGameData($query['result']);
             }
         } else {
-            $this->igdb_api_service->getAuthorizationToken();
+            $this->igdbApiService->getAuthorizationToken();
             return redirect()->route('games.index');
         }
 

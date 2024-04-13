@@ -14,7 +14,7 @@ return new class extends Migration {
             $table->id();
             $table->string('name');
             $table->string('authorization_token')->nullable();
-            $table->integer('expires_in')->nullable();
+            $table->date('expires_in')->nullable();
             $table->timestamps();
         });
     }
