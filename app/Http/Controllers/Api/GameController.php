@@ -10,7 +10,6 @@ use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 
 class GameController extends Controller
 {
@@ -38,25 +37,8 @@ class GameController extends Controller
 
         return response([
             'filter' => $request->get('filter'),
-            'result' => $this->formatSingleGame($query),
+            'result' => $this->igdbApiService->formatSearchedGames($query),
             'message' => 'your search was successful.',
         ], 200);
-    }
-
-    private function formatSingleGame($game_data): array
-    {
-        $result = [];
-
-        foreach ($game_data as $game) {
-            $result[] = [
-                'id' => $game['id'] ?? null,
-                'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
-                'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'slug' => $game['slug'] ?? null,
-            ];
-        }
-
-        return $result;
     }
 }

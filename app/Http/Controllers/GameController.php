@@ -7,7 +7,6 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class GameController extends Controller
@@ -118,7 +117,7 @@ class GameController extends Controller
         if ($statusCode === 200) {
             $result = [];
             foreach ($jsonResponse as $query) {
-                $result[$query['name']] = $this->formatGameData($query['result']);
+                $result[$query['name']] = $this->igdbApiService->formatGameData($query['result']);
             }
         } else {
             $this->igdbApiService->getAuthorizationToken();
@@ -126,27 +125,6 @@ class GameController extends Controller
         }
 
         return Inertia::render('VideoGames/Index')->with($result);
-    }
-
-    private function formatGameData($game_data): array
-    {
-        $result = [];
-
-        foreach ($game_data as $game) {
-            $result[] = [
-                'id' => $game['id'] ?? null,
-                'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
-                'release_date' => $game['first_release_date'] ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
-                'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'rating' => isset($game['rating']) ? round($game['rating']) : '0',
-                'rating_count' => $game['rating_count'] ?? null,
-                'slug' => $game['slug'] ?? null,
-                'summary' => $game['summary'] ?? null,
-            ];
-        }
-
-        return $result;
     }
 
     /**
@@ -183,69 +161,8 @@ class GameController extends Controller
         });
 
         return Inertia::render('VideoGames/Show')->with([
-            'game' => ($this->formatSingleGame($game))[0],
+            'game' => ($this->igdbApiService->formatSingleGame($game))[0],
         ]);
-    }
-
-    private function formatSingleGame($game_data): array
-    {
-        $result = [];
-
-        foreach ($game_data as $game) {
-            $result[] = [
-                'id' => $game['id'] ?? null,
-                'name' => $game['name'] ?? null,
-                'cover_image_url' => $game['cover'] ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url']) : 'https://via.placeholder.com/264x352',
-                'release_date' => isset($game['first_release_date']) ? Carbon::parse($game['first_release_date'])->format('M d, Y') : null,
-                'platforms' => $game['platforms'] ? collect($game['platforms'])->pluck('abbreviation')->implode(', ') : null,
-                'rating' => isset($game['rating']) ? round($game['rating']) : '0',
-                'rating_count' => $game['rating_count'] ?? null,
-                'slug' => $game['slug'] ?? null,
-                'summary' => $game['summary'] ?? null,
-                'genres' => isset($game['genres']) ? collect($game['genres'])->pluck('name')->implode(', ') : null,
-                'involved_companies' => isset($game['involved_companies']) ? collect($game['involved_companies'])->pluck('company.name')->implode(', ') : null,
-                'aggregated_rating' => isset($game['aggregated_rating']) ? round($game['aggregated_rating']) : '0',
-                'url' => $game['url'] ?? null,
-                'videos' => $game['videos'] ?? null,
-                'trailer' => isset($game['videos'][0]['video_id']) ? 'https://youtube.com/embed/' . $game['videos'][0]['video_id'] : null,
-                'screenshots' => isset($game['screenshots']) ? collect($game['screenshots'])->map(function ($screenshot) {
-                    return [
-                        'id' => $screenshot['id'],
-                        'big' => Str::replaceFirst('t_thumb', 't_screenshot_big', $screenshot['url']),
-                        'huge' => Str::replaceFirst('t_thumb', 't_screenshot_huge', $screenshot['url']),
-                    ];
-                })->take(6) : collect(),
-                'similar_games' => isset($game['similar_games']) ? collect($game['similar_games'])->map(function ($game) {
-                    return collect($game)->merge([
-                        'cover_image_url' => array_key_exists('cover', $game)
-                            ? Str::replaceFirst('t_thumb', 't_cover_big', $game['cover']['url'])
-                            : 'https://via.placeholder.com/264x352',
-                        'rating' => isset($game['rating']) ? round($game['rating']) : null,
-                        'platforms' => array_key_exists('platforms', $game)
-                            ? collect($game['platforms'])->pluck('abbreviation')->implode(', ')
-                            : null,
-                        'slug' => $game['slug'],
-                    ]);
-                })->take(6) : collect(),
-                'social' => isset($game['websites']) ? [
-                    'website' => collect($game['websites'])->first(),
-                    'steam' => collect($game['websites'])->filter(function ($website) {
-                        return Str::contains($website['url'], 'steam');
-                    })->first(),
-                    'facebook' => collect($game['websites'])->filter(function ($website) {
-                        return Str::contains($website['url'], 'facebook');
-                    })->first(),
-                    'twitter' => collect($game['websites'])->filter(function ($website) {
-                        return Str::contains($website['url'], 'twitter');
-                    })->first(),
-                    'instagram' => collect($game['websites'])->filter(function ($website) {
-                        return Str::contains($website['url'], 'instagram');
-                    })->first(),
-                ] : [],
-            ];
-        }
-
-        return $result;
     }
 
     /**
