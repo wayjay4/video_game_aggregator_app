@@ -2,34 +2,54 @@
 
 namespace App\Services;
 
+use App\Models\ThirdPartyApi;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 
 class IgdbApiService
 {
-
-    public function getAuthorizationToken(): void
+    function getApiHeaders(): array
     {
-        $client_id = 'wc8xas4x270vts1y04pgzpyld2uiyy';
-        $client_secret = 'zghzapskj9ggjopngandrt4avxxjcb';
+        try {
+            $token = ThirdPartyApi::where('name', 'LIKE', 'igdb')->firstOrFail();
 
-        $response = Http::post('https://id.twitch.tv/oauth2/token?client_id=' . $client_id . '&client_secret=' . $client_secret . '&grant_type=client_credentials')
-            ->json();
+            if ($this->checkTokenExpired($token)) {
+                $token = $this->getAuthorizationToken();
+            }
+        } catch (\Exception $exception) {
+            $token = $this->getAuthorizationToken(true);
+        }
 
-        $key = 'IGDB_AUTHORIZATION';
-        $value = ucfirst(strtolower($response['token_type'])) . ' ' . $response['access_token'];
-
-        $this->setEnv($key, $value);
+        return [...config('services.igdb'), 'Authorization' => $token["authorization_token"]];
     }
 
-    private function setEnv($key, $value): void
+    public function checkTokenExpired($token): bool
     {
-        $search = $key . "='" . env($key) . "'";
-        $replace = $key . "='" . $value . "'";
+        $expirationDurationInSeconds = $token['expires_in'];
+        $updatedAt = $token->updated_at;
+        $currentDateTime = Carbon::now();
 
-        file_put_contents(app()->environmentFilePath(), str_replace(
-            $search,
-            $replace,
-            file_get_contents(app()->environmentFilePath())
-        ));
+        // Calculate the expiration timestamp by adding the expiration duration to the token's updated_at timestamp
+        $expirationTimestamp = $updatedAt->addSeconds($expirationDurationInSeconds);
+
+        // Check if the current time is after the expiration timestamp
+        return $currentDateTime->gt($expirationTimestamp);
+    }
+
+    public function getAuthorizationToken(bool $create = false)
+    {
+        $uri = 'https://id.twitch.tv/oauth2/token?client_id=' . config('services.igdb')['Client-ID'] . '&client_secret=' . config('services.igdb')['Client-Secret'] . '&grant_type=client_credentials';
+
+        $response = Http::post($uri)->json();
+
+        $access_token = ucfirst(strtolower($response['token_type'])) . ' ' . $response['access_token'];
+
+        if ($create) {
+            $token = ThirdPartyApi::create(['name' => 'igdb', 'authorization_token' => $access_token, 'expires_in' => $response['expires_in']]);
+        } else {
+            $token = ThirdPartyApi::where('name', 'LIKE', 'igdb')->first()->update(['authorization_token' => $access_token, 'expires_in' => $response['expires_in']]);
+        }
+
+        return $token;
     }
 }

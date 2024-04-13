@@ -13,10 +13,12 @@ use Inertia\Inertia;
 class GameController extends Controller
 {
     public IgdbApiService $igdb_api_service;
+    public array $headers;
 
     public function __construct(IgdbApiService $igdb_api_service)
     {
         $this->igdb_api_service = $igdb_api_service;
+        $this->headers = $this->igdb_api_service->getApiHeaders();
     }
 
     /**
@@ -68,9 +70,13 @@ class GameController extends Controller
 //            ->post('https://api.igdb.com/v4/games')
 //            ->json();
 
+//        $headers = $this->igdb_api_service->getApiHeaders();
+
+        $headers = $this->headers;
+
         try {
-            $response = Cache::remember('popular-games', 0, function () use ($before, $after, $current, $after_four_months) {
-                return Http::withHeaders(config('services.igdb'))->withBody("
+            $response = Cache::remember('popular-games', 0, function () use ($headers, $before, $after, $current, $after_four_months) {
+                return Http::withHeaders($headers)->withBody("
                 query games \"popular_games\" {
                     fields name, cover.*, first_release_date, platforms.abbreviation, total_rating_count, rating, rating_count, slug;
                     where platforms = (48,49,130,6) & cover != null
@@ -117,9 +123,8 @@ class GameController extends Controller
                 $result[$query['name']] = $this->formatGameData($query['result']);
             }
         } else {
-            // disabling, doesn't work in production
-//            $this->igdb_api_service->getAuthorizationToken();
-//            return redirect()->route('games.index');
+            $this->igdb_api_service->getAuthorizationToken();
+            return redirect()->route('games.index');
         }
 
         return Inertia::render('VideoGames/Index')->with($result);
@@ -167,8 +172,10 @@ class GameController extends Controller
      */
     public function show(string $slug): \Inertia\Response
     {
-        $game = Cache::remember('show-game' . $slug, 60, function () use ($slug) {
-            return Http::withHeaders(config('services.igdb'))->withBody("
+        $headers = $this->headers;
+
+        $game = Cache::remember('show-game' . $slug, 60, function () use ($headers, $slug) {
+            return Http::withHeaders($headers)->withBody("
                 fields *, cover.*, platforms.abbreviation, screenshots.*, genres.name, involved_companies.company.name, url, videos.video_id, websites.url, similar_games.cover.url, similar_games.name, similar_games.rating,similar_games.platforms.abbreviation, similar_games.slug;
                 where slug=\"{$slug}\";
                 limit 1;
